@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+#
+
 
 try:
     import ttk
@@ -15,6 +17,9 @@ class CheckLabelFrame(ttk.LabelFrame):
         self.enabled = tk.IntVar(master, True)
         self.enabled.trace('w', lambda *args: self.update_enable(self))
         cb = ttk.Checkbutton(master, variable=self.enabled, text=text)
+        #make the label blue to match the default LabelFrame
+        ttk.Style().configure("Blue.TCheckbutton", foreground="blue")
+        cb.configure(style="Blue.TCheckbutton")
         ttk.LabelFrame.__init__(self, master, labelwidget=cb, *args, **kwargs)
 
     def update_enable(self, target):
@@ -23,7 +28,6 @@ class CheckLabelFrame(ttk.LabelFrame):
                 if self.enabled.get():
                     # when enableing, check if child is in another CheckLabelFrame
                     if isinstance(child.master, CheckLabelFrame):
-                    #~ if hasattr(child.master, 'enabled'):
                         if child.master.enabled.get():
                             child.config(state=tk.NORMAL)
                     else:
@@ -49,13 +53,18 @@ def main():
 
     h = tk.Frame(win)
     ttk.Label(h, text='subframe label').pack()
-    ttk.Button(h, text='sbuframe btn').pack()
+    ttk.Button(h, text='subframe btn').pack()
     h.pack()
 
     l = CheckLabelFrame(win, text='nested')
     ttk.Button(l, text='test').grid(row=0, column=0)
     ttk.Button(l, text='test').grid(row=0, column=1)
     l.pack()
+
+    m = CheckLabelFrame(l, text='nested nested')
+    ttk.Button(m, text='subsubframe btn').pack()
+    m.grid(rowspan=2)
+
     win.pack(expand=True, fill=tk.BOTH)
     def disable(*args):
         win.enabled.set(False)
